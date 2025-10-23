@@ -1,99 +1,96 @@
-An updated cryptonote-sumokoin-pool fork
-========================================
+Актуализиран fork cryptonote-sumokoin-pool
+=======================================
 
-High performance Node.js (with native C addons) mining pool for CryptoNote based coins such as Bytecoin, DuckNote, Monero, QuazarCoin, Boolberry, Dashcoin, Sumokoin etc..
-Comes with lightweight example front-end script which uses the pool's AJAX API.
+Високопроизводителен Node.js (с нативни C добавки) майнинг пул за CryptoNote базирани монети като Bytecoin, DuckNote, Monero, QuazarCoin, Boolberry, Dashcoin, Sumokoin и др.
+Предлага се с лек примерен фронт-енд скрипт, който използва AJAX API на пула.
 
-## Recent changes
+## Последни промени
 
-**Health monitoring**
-A new /health API handler was added and can be called by miners to learn
-whether the pool is healthy (e.g wallet is reachable). The UI was also
-updated and calles this handler regularly: when the health is not OK a
-red message will inform pool visitors about this.
+**Мониторинг на здравето**
+Добавен е нов API манипулатор /health, който може да бъде извикан от миньорите, за да разберат
+дали пулът е в добро състояние (напр. портфейлът е достъпен). Потребителският интерфейс също е
+актуализиран и извиква този манипулатор редовно: когато здравето не е наред,
+червено съобщение ще информира посетителите на пула за това.
 
 **Proxy X-Forwarded-For support**
-In the configuration you can indicate whether your pool deployment is
-behind a proxy. When you do this than the pool will take the client IP
-(which can give unauthenticated access to the admin interface) from the
-X-Forwarded-IP header that the proxy sets.
+В конфигурацията можете да посочите дали разполагането на вашия пул е
+зад прокси. Когато направите това, пулът ще вземе IP адреса на клиента
+(който може да даде неудостоверен достъп до администраторския интерфейс) от
+заглавката X-Forwarded-IP, която проксито задава.
 
-**Email notifications**
-Miners can configure an email to receive notifications whenever they receive a
-payment. More notifications will be added in the future (e.g. when a block is
-found).
+**Известия по имейл**
+Миньорите могат да конфигурират имейл, за да получават известия всеки път, когато получат
+плащане. В бъдеще ще бъдат добавени още известия (например, когато бъде намерен блок).
 
-**Miner can configure payout minimum**
-Miner can configure the minimum amount of sumo for their payments.
+**Миньорите могат да конфигурират минимално изплащане**
+Миньорите могат да конфигурират минималната сума sumo за своите плащания.
 
-**Subaddresses support**
-You can now mine using a subaddress as your login.
+**Поддръжка на подадреси**
+Вече можете да копаете, използвайки подадрес като вход.
 
-**Payout estimation**
-In your mining stats you will now see a payout estimate. This gives an idea what
-the payout will be when a next block is found.
+**Оценка на изплащането**
+Във вашата статистика за копаене вече ще виждате оценка на изплащането. Това дава представа какво ще бъде
+изплащането, когато бъде намерен следващ блок.
 
-**Miner worker statistics**
-We added a miner worker statistics page. Instead of viewing hashrate statistics
-consolidated per wallet address; you can now view them for each of your
-individual worker.
+**Статистика на миньорските работници**
+Добавихме страница със статистика на миньорските работници. Вместо да преглеждате статистика за хешрейта,
+консолидирана за всеки адрес на портфейл; сега можете да я преглеждате за всеки от вашите
+отделни работници.
 
+## Основни характеристики
 
-## Basic features
+* TCP (stratum-like) протокол за задачи, базирани на сървърно push
+* В сравнение със стария HTTP протокол, този има по-висок хешрейт, по-ниско натоварване на мрежата/CPU сървъра, по-нисък процент на осиротели блокове и по-малка вероятност за грешки
+* Забрана на IP адреси за предотвратяване на атаки за споделяне с ниска разлика
+* Откриване на наводняване на сокети
+* Обработка на плащания
+* Разделени транзакции за справяне с максималния размер на транзакцията
+* Минимален праг за плащане, преди балансът да бъде изплатен
+* Минимална деноминация за прецизност на отрязване на сумата на плащането, за да се намали размерът/сложността на блоковите транзакции
+* Подробно регистриране
+* Възможност за конфигуриране на множество портове - всеки със собствена трудност
+* Променлива трудност / ограничител на споделянията
+* Алгоритъм за доверие в споделянията за намаляване на натоварването на CPU при хеширане при валидиране на споделянията
+* Клъстериране за вертикално мащабиране
+* Модулни компоненти за хоризонтално мащабиране (сървър на пул, база данни, статистика/API, обработка на плащания, фронтенд)
+* API за статистика на живо (използвайки AJAX дълго запитване с CORS)
+* Трудност на валутната мрежа/блок
+* Текуща височина на блока
+* Хешрейт на мрежата
+* Хешрейт на пула
+* Индивидуални статистики на всеки майнер (хешрейт, споделяния) подадени, чакащ баланс, общо платено и др.)
+* Намерени блокове (чакащи, потвърдени и осиротели)
+* Лесно разширяем, адаптивен, лек интерфейс, използващ API за показване на данни
+* Поддръжка за конфигуриране с помощта на tls (https) в кода на пула, за да се позволи същото за уеб интерфейса
+* Няколко модула могат да бъдат стартирани от командния ред вместо един или нито един.
+* Функцията keepalive на Onishin https://github.com/perl5577/cpuminer-multi/commit/0c8aedb
 
-* TCP (stratum-like) protocol for server-push based jobs
-  * Compared to old HTTP protocol, this has a higher hash rate, lower network/CPU server load, lower orphan
-    block percent, and less error prone
-* IP banning to prevent low-diff share attacks
-* Socket flooding detection
-* Payment processing
-  * Splintered transactions to deal with max transaction size
-  * Minimum payment threshold before balance will be paid out
-  * Minimum denomination for truncating payment amount precision to reduce size/complexity of block transactions
-* Detailed logging
-* Ability to configure multiple ports - each with their own difficulty
-* Variable difficulty / share limiter
-* Share trust algorithm to reduce share validation hashing CPU load
-* Clustering for vertical scaling
-* Modular components for horizontal scaling (pool server, database, stats/API, payment processing, front-end)
-* Live stats API (using AJAX long polling with CORS)
-  * Currency network/block difficulty
-  * Current block height
-  * Network hashrate
-  * Pool hashrate
-  * Each miners' individual stats (hashrate, shares submitted, pending balance, total paid, etc)
-  * Blocks found (pending, confirmed, and orphaned)
-* An easily extendable, responsive, light-weight front-end using API to display data
-* Support for configuration using tls (https) in pool code to allowing the same for web frontend
-* Multiple modules can be started on command line instead of one or none.
-* Onishin's keepalive function https://github.com/perl5577/cpuminer-multi/commit/0c8aedb
+## Допълнителни функции
 
-## Extra features
+* Административен панел
+* Агрегирана статистика за пула
+* Мониторинг на стабилността на услугите за демон на монети и RPC портфейли
+* Достъп до данни от лог файлове
+* Списък с потребители с подробна статистика
+* Исторически графики на хешрейта на пула и броя на миньорите, трудността на монетите, процентите и рентабилността на монетите
+* Исторически графики на хешрейта и плащанията на потребителите
+* Валидиране на вход за миньори (адрес на портфейла)
+* Пет конфигурируеми CSS теми
+* Универсален изследовател на блокове и транзакции, базиран на [chainradar.com](http://chainradar.com)
+* Поддръжката на FantomCoin в момента не работи след корекции, за да работят модулите на нодовете след форка на 23 март 2016 г.
+* Поддръжката на MonetaVerde не е тествана след промените за monero fork
 
-* Admin panel
-  * Aggregated pool statistics
-  * Coin daemon & wallet RPC services stability monitoring
-  * Log files data access
-  * Users list with detailed statistics
-* Historic charts of pool's hashrate and miners count, coin difficulty, rates and coin profitability
-* Historic charts of users's hashrate and payments
-* Miner login(wallet address) validation
-* Five configurable CSS themes
-* Universal blocks and transactions explorer based on [chainradar.com](http://chainradar.com)
-* FantomCoin support is not currently working after fixes to get node modules to work after Mar 23, 2016 fork.
-* MonetaVerde support not tested since changes for monero fork
-* Set fixed difficulty on miner client by passing "address" param with ".[difficulty]" postfix
-* Prevent "transaction is too big" error with "payments.maxTransactionAmount" option
-* Option to enable (simple) dynamic fee based on number of payees per transaction and option to have miner pay transfer fee instead of pool owner (applied to dynamic fee only)
+* Зададена е фиксирана трудност на клиента за майнер чрез предаване на параметъра "address" с постфикс ".[difficulty]"
 
+* Предотвратяване на грешка "транзакцията е твърде голяма" с опцията "payments.maxTransactionAmount"
+* Опция за активиране на (проста) динамична такса въз основа на броя на получателите на транзакция и опция майнерът да плаща таксата за превод вместо собственика на пула (прилага се само за динамична такса)
 
-## Pools Using This Software
+## Пулове, използващи този софтуер
 
 * https://pool.sumokoin.com
 * https://pool.sumokoin.ch
 
-More pools can be found on [sumopools.com](https://www.sumopools.com)
-
+Още пулове можете да намерите на [sumopools.com](https://www.sumopools.com)
 ## Usage
 
 Visit the usage guide here.
@@ -105,3 +102,4 @@ Visit the usage guide here.
 Released under the GNU General Public License v2
 
 http://www.gnu.org/licenses/gpl-2.0.html
+
